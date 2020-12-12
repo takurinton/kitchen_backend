@@ -62,3 +62,8 @@ class OperationUser(APIView):
         }
 
         return Response(res)
+    
+    def delete(self, request):
+        user = request.user 
+        user.delete()
+        return Response({'status': 'delete ok'})
