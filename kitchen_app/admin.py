@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.utils.translation import ugettext_lazy as _
-from .models import User
+from .models import User, Cart, InCartItems, Item
 
 
 class MyUserChangeForm(UserChangeForm):
@@ -37,5 +37,13 @@ class MyUserAdmin(UserAdmin):
     search_fields = ('email', )
     ordering = ('email',)
 
+class ItemAdmin(admin.ModelAdmin):
+    fields = ('name', 'price', )
+    list_display = ('name', 'price', )
+
+
 
 admin.site.register(User, MyUserAdmin)
+admin.site.register(Cart)
+admin.site.register(InCartItems)
+admin.site.register(Item, ItemAdmin)
