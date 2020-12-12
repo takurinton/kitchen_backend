@@ -19,7 +19,7 @@ class CreateUser(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class GetUser(APIView):
+class OperationUser(APIView):
     def get(self, request):
         user = request.user
         res = {
@@ -28,5 +28,37 @@ class GetUser(APIView):
             'is_staff': user.is_staff, 
             'is_active': user.is_active, 
         }
+        return Response(res)
+    
+    def put(self, request):
+        user = request.user
+        try:
+            email = request.data['email']
+        except:
+            email = ''
+        try:
+            password = request.data['password']
+        except:
+            password = ''
+        try:
+            address = request.data['address']
+        except:
+            address = ''
         
+        if email != '':
+            user.email = email
+        if password != '':
+            user.password = password
+        if address != '':
+            user.address = address
+
+        user.save()
+
+        res = {
+            'email': user.email, 
+            'address': user.address, 
+            'is_staff': user.is_staff, 
+            'is_active': user.is_active, 
+        }
+
         return Response(res)
