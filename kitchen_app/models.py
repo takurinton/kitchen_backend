@@ -75,3 +75,23 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def username(self):
         return self.email
+
+
+class Item(models.Model):
+    name = models.CharField(max_length=127)
+    price = models.PositiveIntegerField()
+    def __str__(self):
+        return str(self.name)
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    pub_date = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.user)
+
+class InCartItems(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    number = models.IntegerField(null=True)
