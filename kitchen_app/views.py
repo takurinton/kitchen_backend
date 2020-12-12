@@ -109,7 +109,7 @@ class CartSubmit(APIView):
     def post(self, request):
         user = request.user 
         date = request.data['date']
-        
+
         try:
             cart = Cart.objects.get(user=user, is_active=True)
             if not cart.is_active:
@@ -124,6 +124,31 @@ class CartSubmit(APIView):
         return Response({'status': 'ok'})
 
         
+class GetItems(APIView):
+    def get(self, request):
+        items = Item.objects.all()
+        res = [
+            {
+                'name': item.name, 
+                'price': item.price, 
+            }
+            for item in items
+        ]
+
+        return Response(res)
+
+
+class GetItem(APIView):
+    def get(self, request, name):
+        item = Item.objects.get(name=name)
+        res = {
+            'name': item.name, 
+            'price': item.price
+        }
+
+        return Response(res)
+
+
 def add_cart(user, data):
     _item = data['item']
     number = int(data['number'])
