@@ -81,14 +81,18 @@ class OperationCart(APIView):
         
         items = InCartItems.objects.filter(cart=cart)
         
-        res = [
-            {
-                # ここのSQL怪しいので後で確認、とりま動くものを
-                'item': item.item.name, 
-                'number': item.number, 
-            }
-            for item in items
-        ]
+        res = {
+            'items': [
+                {
+                    # ここのSQL怪しいので後で確認、とりま動くものを
+                    'item': item.item.name, 
+                    'number': item.number
+                }
+                for item in items
+            ], 
+            'price': sum_price(items)
+        }
+
 
         return Response(res)
     
@@ -127,4 +131,7 @@ def add_cart(user, data):
 
     return True
 
-
+def sum_price(items):
+    # 要修正
+    price = [item.item.price*item.number for item in items]
+    return sum(price)
