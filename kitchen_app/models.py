@@ -87,7 +87,7 @@ class Item(models.Model):
 class Cart(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
-    pub_date = models.DateTimeField(null=True, blank=True)
+    date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return str(self.user)

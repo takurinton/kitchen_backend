@@ -93,7 +93,6 @@ class OperationCart(APIView):
             'price': sum_price(items)
         }
 
-
         return Response(res)
     
     def post(self, request):
@@ -104,6 +103,25 @@ class OperationCart(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(data)
+    
+class CartSubmit(APIView):
+    # TODO: メール送信の処理
+    def post(self, request):
+        user = request.user 
+        date = request.data['date']
+        
+        try:
+            cart = Cart.objects.get(user=user, is_active=True)
+            if not cart.is_active:
+                return Response({'status': 'cart is not valid'})
+        except:
+            return Response({'status': 'cart is empty'})
+        
+        cart.is_active = False 
+        cart.date = date
+        cart.save()
+
+        return Response({'status': 'ok'})
 
         
 def add_cart(user, data):
