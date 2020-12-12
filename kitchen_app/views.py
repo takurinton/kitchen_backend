@@ -24,6 +24,7 @@ class GetUser(APIView):
         user = request.user
         res = {
             'email': user.email, 
+            'address': user.address, 
             'is_staff': user.is_staff, 
             'is_active': user.is_active, 
         }
