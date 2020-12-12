@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions, generics, status, viewsets, filters
 
-from .models import User
+from .models import User, Cart, InCartItems, Item
 from .serializer import CreateUserSerializer
 
 class CreateUser(generics.CreateAPIView):
@@ -67,3 +67,64 @@ class OperationUser(APIView):
         user = request.user 
         user.delete()
         return Response({'status': 'delete ok'})
+
+    
+class OperationCart(APIView):
+    def get(self, request):
+        user = request.user 
+        try:
+            cart = Cart.objects.get(user=user, is_active=True)
+            if not cart.is_active:
+                return Response({'status': 'cart is not valid'})
+        except:
+            return Response({'status': 'cart is empty'})
+        
+        items = InCartItems.objects.filter(cart=cart)
+        
+        res = [
+            {
+                # ここのSQL怪しいので後で確認、とりま動くものを
+                'item': item.item.name, 
+                'number': item.number, 
+            }
+            for item in items
+        ]
+
+        return Response(res)
+    
+    def post(self, request):
+        user = request.user 
+        data = request.data
+
+        if not add_cart(user, data):
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(data)
+
+        
+def add_cart(user, data):
+    _item = data['item']
+    number = int(data['number'])
+
+    try:
+        item = Item.objects.get(name=_item)
+    except:
+        return False
+
+    try:
+        cart = Cart.objects.get(user=user, is_active=True)
+    except:
+        cart = Cart(user=user, is_active=True).save()
+        cart.save()
+
+    try:
+        in_cart_items = InCartItems.objects.get(cart=cart, item=item)
+        in_cart_items.number += number
+    except:
+        in_cart_items = InCartItems(cart=cart, item=item, number=number)
+        
+    in_cart_items.save()
+
+    return True
+
+

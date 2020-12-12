@@ -30,7 +30,7 @@ class CustomUserManager(UserManager):
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(email, password, address, **extra_fields)
 
-    def create_superuser(self, email, password, address, **extra_fields):
+    def create_superuser(self, email, password, address=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         if extra_fields.get('is_staff') is not True:
@@ -79,13 +79,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Item(models.Model):
-    name = models.CharField(max_length=127)
+    name = models.CharField(max_length=127, primary_key=True)
     price = models.PositiveIntegerField()
     def __str__(self):
         return str(self.name)
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
     pub_date = models.DateTimeField(null=True, blank=True)
 
@@ -93,6 +93,8 @@ class Cart(models.Model):
         return str(self.user)
 
 class InCartItems(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
+    item = models.ForeignKey('Item', on_delete=models.CASCADE)
     number = models.IntegerField(null=True)
+    def __str__(self):
+        return str(self.item)

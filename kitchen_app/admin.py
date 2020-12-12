@@ -42,9 +42,13 @@ class ItemAdmin(admin.ModelAdmin):
     fields = ('name', 'price', )
     list_display = ('name', 'price', )
 
+class InCartItemsAdmin(admin.ModelAdmin):
+    fields = ('cart', 'item', 'number', )
+    list_display = ('cart', 'item', 'number', )
+
 
 
 admin.site.register(User, MyUserAdmin)
 admin.site.register(Cart)
-admin.site.register(InCartItems)
+admin.site.register(InCartItems, InCartItemsAdmin)
 admin.site.register(Item, ItemAdmin)
