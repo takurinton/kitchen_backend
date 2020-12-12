@@ -80,6 +80,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Item(models.Model):
     name = models.CharField(max_length=127, primary_key=True)
+    expo = models.TextField(default='燻製', null=True, blank=True)
     price = models.PositiveIntegerField()
     def __str__(self):
         return str(self.name)

@@ -130,6 +130,7 @@ class GetItems(APIView):
         res = [
             {
                 'name': item.name, 
+                'expo': item.expo, 
                 'price': item.price, 
             }
             for item in items
@@ -143,6 +144,7 @@ class GetItem(APIView):
         item = Item.objects.get(name=name)
         res = {
             'name': item.name, 
+            'expo': item.expo, 
             'price': item.price
         }
 
